@@ -1,0 +1,107 @@
+<head>
+  <meta charset="UTF-8">
+
+  <title>CodePen - Responsive Admin Screen</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel='stylesheet prefetch' href='http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css'>
+
+    <!--[if lte IE 8]>
+	<link rel="stylesheet" href="lib/leaflet/leaflet.ie.css" />
+	<link rel="stylesheet" href="leaflet.draw.ie.css" />
+	<![endif]-->
+</head>
+
+<body>
+</body>
+
+<template name="mainLayout">
+<div id="menu-overlay"></div>
+<div id="menu-toggle" class="closed" data-title="Menu">
+    <i class="fa fa-bars"></i>
+    <i class="fa fa-times"></i>
+  </div>
+<header id="main-header">
+  <nav id="sidenav">
+    <div id="sidenav-header">
+      {{#if currentUser}}
+        <div id="profile-picture">
+      	  <img src="http://www.gravatar.com/avatar/{{gravatar}}.png"/>
+        </div>
+        <a href="#" id="profile-link">{{> loginButtons}}</a>
+
+      {{else}}
+        <h3>You are not logged in: {{> loginButtons}}</h3>
+
+      {{/if}}
+    </div>
+    {{#if currentUser}}
+      <div id="account-actions">
+        <a href="#" data-title="Home"><i class="fa fa-home"></i></a>
+        <a href="#" id="messages" data-title="Messages" data-newmessages="1"><i class="fa fa-inbox"></i></a>
+        <a href="#" data-title="Settings"><i class="fa fa-cog"></i></a>
+      </div>
+      <ul id="main-nav">
+        {{#each admincats}}
+          {{> admincat}}
+        {{/each}}
+      </ul>
+    {{/if}}
+  </nav>
+  <form id="admin-search">
+    <input type="text" id="search-field" placeholder="Search"/>
+    <label for="search-field" id="search-label" title="Search"><i class="fa fa-search"></i></label>
+  </form>
+  <div id="header_logo">
+    <a href="#">Logo</a>
+  </div>
+</header>
+{{#if currentUser}}
+  <section id="content">
+    {{> yield}}
+  </section>
+{{/if}}
+<footer></footer>
+</template>
+
+<template name="defaultPage">
+<h1>Welcome Home John</h1>
+</template>
+
+<template name="Dashboard">
+<h1>yo niggar, this is your Dashboard</h1>
+{{> map}}
+</template>
+
+<template name="Tasks">
+<h1>Tasks</h1>
+</template>
+
+<template name="Contacts">
+<h1>Contacts</h1>
+</template>
+
+<template name="FAQs">
+<h1>FAQs</h1>
+</template>
+
+<template name="admincat">
+      <li class="admincat">
+        <a href="{{name}}">
+          <i class="fa fa-{{icon}}"></i>
+          {{name}}
+        </a>
+      </li>
+</template>
+
+<template name="map">
+    <div id="container">
+      <h1 class="title">Meteor Leaflet Demo</h1>
+      <div id="map" class="map"></div>
+      <div class="notice">
+        Double-click on map creates a marker<br>
+        Click on a marker to delete it
+      </div>
+    </div>
+</template>

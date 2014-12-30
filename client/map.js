@@ -1,0 +1,59 @@
+var Layers = new Meteor.Collection('layers');
+
+Meteor.subscribe('layers');
+
+Template.map.rendered = function () {
+        L.Icon.Default.imagePath = 'packages/leaflet/images';
+
+        var map = L.map('map', {
+                doubleClickZoom: false
+        }).setView([-40.17887331434695, -63.896484375], 6);
+
+        L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+                opacity: .5
+        }).addTo(map);
+
+	// Initialise the FeatureGroup to store editable layers
+	var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
+
+	// Initialise the draw control and pass it the FeatureGroup of editable layers
+	var drawControl = new L.Control.Draw({
+		edit: {
+			featureGroup: drawnItems,
+//			edit: false,
+		}
+	});
+	map.addControl(drawControl);
+
+	map.on('draw:created', function (e) {
+		var type = e.layerType,
+		    layer = e.layer;
+
+		if (type === 'marker') {
+			// Do marker specific actions
+		}
+
+                Layers.insert({layer: layer.toGeoJSON()});
+	});
+
+        var query = Layers.find();
+        query.observe({
+                added: function(document) {
+		        // Do whatever else you need to. (save to db, add to map etc)
+                        drawnItems.addLayer(L.geoJson().addData(document.layer));
+                },
+                removed: function(oldDocument) {
+                        layers = map._layers;
+                        var key, val;
+                        for (key in layers) {
+                                val = layers[key];
+                                if (val._latlng) {
+                                        if (val._latlng.lat === oldDocument.latlng.lat && val._latlng.lng === oldDocument.latlng.lng) {
+                                                map.removeLayer(val);
+                                        }
+                                }
+                        }
+                }
+        });
+}
